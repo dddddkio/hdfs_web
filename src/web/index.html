@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>hdfs_java_web</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 引入 Bootstrap -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 Shiv 和 Respond.js 用于让 IE8 支持 HTML5元素和媒体查询 -->
+    <!-- 注意： 如果通过 file://  引入 Respond.js 文件，则该文件无法起效果 -->
+    <!--[if lt IE 9]>
+         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+         <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+      <![endif]-->
+</head>
+
+<body>
+    <div id="app">
+        <!-- 顶部欢迎模块 -->
+        <h1 style="color: blue;display: flex;justify-content: center;">
+            <img src="img/hdfs.png">
+        </h1>
+        <h1 style="color: blue;padding:50rpx;display: flex;justify-content: center;">{{text}}</h1>
+        <!-- 面包屑导航 -->
+        <ul class="breadcrumb">&nbsp;当前位置&nbsp;&nbsp;
+            <li v-for="(item,index) in nowPathList"><a href="#" class="active" >{{index==0?'root':item}}</a></li>
+        </ul>
+
+        <!-- 上传文件 -->
+        <div style="display: flex;">
+            <div class="text-nowrap" style="margin-left: 2vw;clear: both;">
+                <form id="myform" method="post" enctype="multipart/form-data" action="localhost:8080/uploadFile" style="display: flex;">
+                    <input type="file" name="file" @change="getFile($event)" />
+                    <button class="btn btn-default btn-sm" style="color:green;border-color: green;margin-right: 10vw;" value="上传文件" @click="submitForm($event)" >上传文件</button>
+                </form>
+                <p class="help-block">请选择上传文件
+                    <span class="glyphicon glyphicon-upload" aria-hidden="true"></span>
+                </p>
+                
+            </div>
+            <div class="text-nowrap" id="mkdir" style="clear: both;">
+                
+                <input style="margin-bottom: 0.5vh;" placeholder="请输入文件夹名称" v-model:dirName="dirName" 
+                type="text" onkeyup="this.dirName = this.dirName.replace(/\s+/g,'')">
+                <button type="button" class="btn btn-default btn-sm" style="color:green;border-color: green;margin-left: 2vw;" v-on:click="mkdir">
+                    <span class="glyphicon glyphicon-plus-sign" aria-hidden="true" style="color:green"></span>
+                    创建文件夹</button>
+            </div>
+            
+        </div>
+
+        <div class="table-striped">
+            <table class="table">
+                <thead style="background-color: black;color:white;">
+                    <tr>
+                        <th class="text-center" style="width: 15vw;">序号</th>
+                        <th class="text-center" style="width: 15vw;">文件名</th>
+                        <th class="text-center" style="width: 15vw;">属性</th>
+                        <th class="text-center" style="width: 15vw;">大小</th>
+                        <th class="text-center" style="width: 40vw;">可执行操作</th>
+                    </tr>
+                </thead>
+                <tbody id="FileList">
+                    <tr class="text-center" v-for="(file,index) in FileList" >
+                        <td>{{index+1}}</td>
+                        <td>{{file.name}}</td>
+                        <td>{{file.isDir}}</td>
+                        <td>{{file.size}}</td>
+                        <td>
+                            <button type="button" class="btn btn-default btn-sm" style="border-color:#34a0ff;color:#34a0ff;" v-on:click="download" :data-name="file.name">
+                                <span class="glyphicon glyphicon-download-alt" aria-hidden="true" style="color:#34a0ff;"></span>&nbsp;下载
+                            </button>
+                            <button type="button" class="btn btn-default btn-sm" style="color: red; border-color: red;" v-on:click="remove" :data-name="file.name">
+                                <span class="glyphicon glyphicon-trash" aria-hidden="true" style="color:red"></span>&nbsp;删除
+                            </button>
+                            <button type="button" class="btn btn-default btn-sm" style="color: rgb(66, 177, 185); border-color: rgb(66, 177, 185);" v-on:click="intoDir" :data-name="file.name" v-if="file.isDir=='Folder'">
+                                <span class="glyphicon glyphicon-chevron-right" aria-hidden="true" style="color:rgb(66, 177, 185)"></span>&nbsp;进入文件夹
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div style="margin-left:90vw">
+            <button type="button" class="btn btn-info btn-sm" v-on:click="backDir" v-if="nowPath.length>1">
+                <span class="glyphicon glyphicon-left"></span>返回上一级
+            </button>
+        </div>
+        
+    </div>
+
+    
+    
+</body>
+    <!-- jQuery (Bootstrap 的 JavaScript 插件需要引入 jQuery) -->
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <!-- VUE 生产环境版本 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <!-- VUE使用axios发送请求 -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- 引入js文件 -->
+    <script src="js/main.js"></script>
+    <!-- 包括所有已编译的插件 -->
+    <link href="https://cdn.bootcss.com/toastr.js/latest/css/toastr.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/toastr.js/latest/js/toastr.min.js"></script>
+    
+</html>
